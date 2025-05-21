@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Submit Ticket</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+        margin: 0;
+        padding: 30px 0 0 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        animation: fadeIn 2s ease-in;
+    }
+    
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        animation: slideDown 1s ease-out;
+    }
+
+    form {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+        width: 350px;
+        animation: popUp 0.8s ease forwards;
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    input[type="text"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0 20px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+        border-color: #74ebd5;
+        outline: none;
+        box-shadow: 0px 0px 8px rgba(116, 235, 213, 0.7);
+    }
+
+    button {
+        width: 100%;
+        background-color: #74ebd5;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background-color: #4ac29a;
+    }
+
+    .back-button {
+        background-color: #4da6ff;
+    }
+
+    .back-button:hover {
+        background-color: #4da6ff;
+    }
+
+    #responseMessage {
+        margin-top: 15px;
+        text-align: center;
+        font-weight: 600;
+        color: blue;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes popUp {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+</head>
+<body>
+   
+</header>
+
+<h2>Submit a New Ticket</h2>
+
+<form id="ticketForm">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" rows="4" required></textarea><br><br>
+
+    <label for="category" class="form-label">Category:</label>
+    <select class="form-select" id="category" required>
+      <option value="">Select Category</option>
+      <option value="Software">Software</option>
+      <option value="Hardware">Hardware</option>
+      <option value="Networking">Networking</option>
+    </select><br><br>
+
+    <button type="submit">Submit Ticket</button>
+    <button type="button" class="back-button" onclick="goBack()">Back</button>
+</form>
+
+<p id="responseMessage"></p>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    document.getElementById('ticketForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const ticketData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            category: document.getElementById('category').value,
+        };
+
+        if (!ticketData.title || !ticketData.description || !ticketData.category) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        axios.post('http://localhost:5000/submitTicket', ticketData)
+            .then(function (response) {
+                document.getElementById('responseMessage').innerText = response.data.message;
+                window.location.href = "dashboard.html"; // Redirect to dashboard after submission
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    document.getElementById('responseMessage').innerText = error.response.data.error;
+                } else {
+                    document.getElementById('responseMessage').innerText = 'An error occurred!';
+                }
+            });
+    });
+</script>
+
+</body>
+</html>

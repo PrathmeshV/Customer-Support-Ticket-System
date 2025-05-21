@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+       background: linear-gradient(135deg, #74ebd5, #ACB6E5, #FF9A9E, #D4FC79);
+      background-size: 500% 500%;
+      animation: moveBackground 15s infinite ease-in-out;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    header {
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    footer {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      color: #555;
+    }
+
+    header img {
+      height: 60px;
+      object-fit: contain;
+      animation: fadeSlide 2s ease;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #ddd;
+    }
+    .button-container {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #5f83aa;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #5f83aa;
+    }
+  </style>
+</head>
+<header>
+  <img src="logo.jpg" alt="Customer Support System Logo">
+  <h1> Customer Support System</h1>
+
+</header>
+<body>
+  <h1>User Dashboard</h1>
+  <p>Welcome to the User Dashboard. Here you can view your tickets and their statuses.</p>
+  <p>Click on the buttons below to navigate through the dashboard.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>User Name</th>
+        <th>Email</th>
+        <th>Ticket ID</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="userDetails">
+      <!-- User details will be populated here -->
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ticket ID</th>
+        <th>Title</th>
+        <th>Priority</th>
+        <th>Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="ticketTableBody">
+      <!-- Ticket details will be populated here -->
+    </tbody>
+  </table>
+
+  <div class="button-container">
+    <button onclick="goBack()">Back</button>
+    <button onclick="goNext()">Next</button>
+  </div>
+
+   <script>
+    // Fetch dashboard data
+    async function fetchDashboardData() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/getDashboardData', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                const userTbody = document.getElementById('userDetails');
+                const ticketTbody = document.getElementById('ticketTableBody');
+
+                userTbody.innerHTML = '';
+                ticketTbody.innerHTML = '';
+
+                data.forEach(item => {
+                    // Fill user table
+                    const userRow = document.createElement('tr');
+                    userRow.innerHTML = `
+                        <td>${item.user_id}</td>
+                        <td>${item.userName}</td>
+                        <td>${item.email}</td>
+                        <td>${item.ticket_id}</td>
+                        <td>${item.status}</td>
+                    `;
+                    userTbody.appendChild(userRow);
+
+                    // Fill ticket table
+                    const ticketRow = document.createElement('tr');
+                    ticketRow.innerHTML = `
+                        <td>${item.ticket_id}</td>
+                        <td>${item.title}</td>
+                        <td>${item.priority}</td>
+                        <td>${item.category}</td>
+                        <td>${item.status}</td>
+                    `;
+                    ticketTbody.appendChild(ticketRow);
+                });
+
+            } else {
+                alert('Error fetching dashboard data');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error fetching dashboard data');
+        }
+    }
+    function goBack() {
+    window.history.back();
+}
+
+function goNext() {
+    
+    window.location.href = 'feedback.html';
+}
+
+
+    fetchDashboardData(); // Fetch data when page loads
+</script>
+
+</body>
+</html>
